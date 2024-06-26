@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CarPass Dashboard</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+    <script src="/static/kit.min.js" crossorigin="anonymous"></script>
+    <script src="/static/modal.js"></script>
+</head>
+<body>
+<section class="section">
+    <div class="container">
+
+        <h1 class="title">CarPass - для клиента</h1>
+
+        <div class="tabs">
+            <ul>
+                <li class="is-active"><a>Главная</a></li>
+            </ul>
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <article class="panel is-link">
+                    <p class="panel-heading">Информация о пропуске</p>
+                    <div class="panel-block">
+                        Идентификатор: {{ car.id }}
+                    </div>
+                    <div class="panel-block" style="border: 0">
+                        <div class="content">
+                            <h4 class="title is-4">
+                                Автомобиль {{ car.car_model }}
+                            </h4>
+                            <button class="button {% if car.car_type == "Такси" %} is-warning {% endif %} is-large mb-5">{{ car.car_num }}🇷🇺</button>
+                            <p>
+                                Пропуск дает разрешение автомобилю с {{ car.date_start }} по {{ car.date_end }} заезжать
+                                на закрытую территорию "{{ car.object_title }}".
+                                <br>Пропуск заказан на ФИО: {{ car.owner_fio }}, причина для
+                                проезда: {{ car.owner_why }}
+                            </p>
+                            {% if car.comment|length == 0 or car.comment|length == 1 %}
+                            {% else %}
+                                <blockquote>
+                                    <h4>Комментарий</h4>
+                                    {{ car.comment }}
+                                </blockquote>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                    <div class="panel-block">
+                        <div class="buttons">
+                            <a href="/dashboard" class="button is-link is-light">
+                                Вернутся на главную
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+
+</body>
+</html>
