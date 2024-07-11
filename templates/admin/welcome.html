@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CarPass</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+</head>
+<body>
+<section class="section">
+    <div class="container">
+
+        {% if alert %}
+            <div class="notification is-warning is-light">
+                {{ alert }}
+            </div>
+        {% endif %}
+
+        <form action="/" method="post" class="box">
+            <p class="title is-4">CarPass - для администратора</p>
+
+            <div class="field">
+                <label class="label">Почта</label>
+                <div class="control">
+                    <input name="email" class="input" type="email" placeholder="alex@example.com"/>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Пароль</label>
+                <div class="control">
+                    <input name="password" class="input" type="password" placeholder="********"/>
+                </div>
+            </div>
+
+            <button class="button is-link">Войти</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

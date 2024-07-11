@@ -1,16 +1,16 @@
-import uuid
-
 from flask import *
 from files import *
+import uuid
 
 app = Flask(__name__)
 app.secret_key = 'carpass'
 
+# CLIENT
 
 @app.route('/', methods=['GET'])
 def main_page():
     if session.get('auth', False) == False:
-        return render_template('welcome.html')
+        return render_template('client/welcome.html')
     else:
         return redirect('/dashboard')
 
@@ -25,7 +25,7 @@ def post_main_page():
         return redirect('/dashboard')
     else:
         alert = 'Неправильная почта или пароль'
-        return render_template('welcome.html', alert=alert)
+        return render_template('client/welcome.html', alert=alert)
 
 
 @app.route('/dashboard', methods=['GET'])
@@ -43,26 +43,28 @@ def get_dashboard():
         elif archive_status == 'person':
             asp = 1
         return render_template(
-            'dashboard.html', cars=user_cars, persons=user_persons, archive=user_archive, asc=asc, asp=asp
+            'client/dashboard.html', cars=user_cars, persons=user_persons, archive=user_archive, asc=asc, asp=asp
         )
 
 
 @app.route('/new_car', methods=['POST'])
 def post_new_car():
-    car_num = request.form.get('car_num')
-    car_model = request.form.get('car_model')
-    car_type = request.form.get('car_type')
-    owner_fio = request.form.get('owner_fio')
-    owner_why = request.form.get('owner_why')
-    comment = request.form.get('comment')
-    date_start = request.form.get('date_start')
-    date_end = request.form.get('date_end')
-    object_title = request.form.get('object_title')
-    by = session['auth']
-    uniq_id = str(uuid.uuid4())
-    add_car_pass(
-        car_num, car_model, car_type, owner_fio, owner_why, comment, date_start, date_end, object_title, by, uniq_id
-    )
+    # car_num = request.form.get('car_num')
+    # car_model = request.form.get('car_model')
+    # car_type = request.form.get('car_type')
+    # owner_fio = request.form.get('owner_fio')
+    # owner_why = request.form.get('owner_why')
+    # comment = request.form.get('comment')
+    # date_start = request.form.get('date_start')
+    # date_end = request.form.get('date_end')
+    # object_title = request.form.get('object_title')
+    # by = session['auth']
+    # by_phone = get_user_phone(by)
+    # uniq_id = str(uuid.uuid4())
+    # add_car_pass(
+    #     car_num, car_model, car_type, owner_fio, owner_why, comment, date_start, date_end, object_title, by, uniq_id
+    # )
+    add_simple_car_pass(request, session['auth'])
     return redirect('/dashboard')
 
 
@@ -85,13 +87,13 @@ def post_new_person():
 @app.route('/dashboard/info_car/<id>', methods=['GET'])
 def get_dashboard_info_car(id):
     car = get_car_by_id(id)
-    return render_template('dashboard_car.html', car=car)
+    return render_template('client/dashboard_car.html', car=car)
 
 
 @app.route('/dashboard/info_person/<id>', methods=['GET'])
 def get_dashboard_info_person(id):
     person = get_person_by_id(id)
-    return render_template('dashboard_person.html', p=person)
+    return render_template('client/dashboard_person.html', p=person)
 
 
 @app.route('/delete/car/<id>', methods=['GET'])
@@ -105,16 +107,22 @@ def get_delete_person(id):
     delete_person_pass(id)
     return redirect('/dashboard')
 
-@app.route('/from_archive/<id>', methods=['GET'])
-def get_from_archive(id):
-    make_actual(id)
-    return redirect('/dashboard')
 
-@app.route('/max_delete/<id>', methods=['GET'])
-def get_max_delete(id):
-    delete_from_archive(id)
-    return redirect('/dashboard')
+# ADMIN
 
+@app.route('/admin/welcome')
+def admin_welcome():
+    if session.get('admin', False) == False:
+        return render_template('admin/welcome.html')
+    else:
+        return redirect('/admin/dashboard')
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if session.get('admin', False) == False:
+        return redirect('/admin/welcome')
+    else:
+        return render_template('admin/dashboard.html')
 
 
 app.run()

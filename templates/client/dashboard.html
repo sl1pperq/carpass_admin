@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CarPass Dashboard</title>
     <link rel="stylesheet" href="/static/bulma.min.css">
-    <script src="https://kit.fontawesome.com/e4ea351eb1.js" crossorigin="anonymous"></script>
+    <script src="/static/kit.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <section class="section">
     <div class="container">
 
-        <h1 class="title">CarPass - для клиента</h1>
+        <h1 class="title">CarPass — для клиента</h1>
 
         <div class="tabs">
             <ul>
@@ -30,15 +30,6 @@
             <div class="column">
                 <article class="panel is-info">
                     <p class="panel-heading">Пропуска машин</p>
-                    <p class="panel-tabs">
-                        {% if asc == 0 %}
-                            <a href="/dashboard" class="is-active">Все</a>
-                            <a href="/dashboard?archive=car">Архивные</a>
-                        {% elif asc == 1 %}
-                            <a href="/dashboard">Все</a>
-                            <a href="/dashboard?archive=car" class="is-active">Архивные</a>
-                        {% endif %}
-                    </p>
                     <div class="panel-block">
                         <p class="control has-icons-left">
                             <input class="input is-info" type="text" placeholder="Найти номер"/>
@@ -47,73 +38,34 @@
                           </span>
                         </p>
                     </div>
-                    {% if asc == 0 %}
-                        {% for c in cars %}
-                            <div class="panel-block">
+                    {% for c in cars %}
+                        <div class="panel-block">
                                 <span class="panel-icon">
                                   <i class="fa-solid fa-car"></i>
                                 </span>
-                                <div class="dropdown is-hoverable">
-                                    <div class="dropdown-trigger">
-                                        <button class="button {% if c.car_type == "Такси" %} is-warning {% endif %}"
-                                                aria-haspopup="true"
-                                                aria-controls="dropdown-menu-{{ loop.index }}">
-                                            <span>{{ c.car_num }}</span>
-                                        </button>
-                                    </div>
-                                    <div class="dropdown-menu" id="dropdown-menu-{{ loop.index }}" role="menu">
-                                        <div class="dropdown-content">
-                                            <a href="/dashboard/info_car/{{ c.id }}" class="dropdown-item">Подробнее</a>
-                                            <a href="/delete/car/{{ c.id }}" class="dropdown-item">Отозвать</a>
-                                        </div>
+                            <div class="dropdown is-hoverable">
+                                <div class="dropdown-trigger">
+                                    <button class="button {% if c.car_type == "Такси" %} is-warning {% endif %}"
+                                            aria-haspopup="true"
+                                            aria-controls="dropdown-menu-{{ loop.index }}">
+                                        <span>{{ c.car_num }}</span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu-{{ loop.index }}" role="menu">
+                                    <div class="dropdown-content">
+                                        <a href="/dashboard/info_car/{{ c.id }}" class="dropdown-item">Подробнее</a>
+                                        <a href="/delete/car/{{ c.id }}" class="dropdown-item">Отозвать</a>
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}
-                    {% elif asc == 1 %}
-                        {% for c in archive %}
-                            {% if "car_num" in c %}
-                                <div class="panel-block">
-                                <span class="panel-icon">
-                                  <i class="fa-solid fa-car"></i>
-                                </span>
-                                    <div class="dropdown is-hoverable">
-                                        <div class="dropdown-trigger">
-                                            <button class="button {% if c.car_type == "Такси" %} is-warning {% endif %}"
-                                                    aria-haspopup="true"
-                                                    aria-controls="dropdown-menu-{{ loop.index }}">
-                                                <span>{{ c.car_num }}</span>
-                                            </button>
-                                        </div>
-                                        <div class="dropdown-menu" id="dropdown-menu-{{ loop.index }}" role="menu">
-                                            <div class="dropdown-content">
-                                                <a href="/from_archive/{{ c.id }}" class="dropdown-item">
-                                                    Сделать актуальным
-                                                </a>
-                                                <a href="/max_delete/{{ c.id }}" class="dropdown-item">
-                                                    Удалить окончательно
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                        </div>
+                    {% endfor %}
+
                 </article>
             </div>
             <div class="column">
                 <article class="panel">
                     <p class="panel-heading">Пропуска людей</p>
-                    <p class="panel-tabs">
-                        {% if asp == 0 %}
-                            <a href="/dashboard" class="is-active">Все</a>
-                            <a href="/dashboard?archive=person">Архивные</a>
-                        {% elif asp == 1 %}
-                            <a href="/dashboard">Все</a>
-                            <a href="/dashboard?archive=person" class="is-active">Архивные</a>
-                        {% endif %}
-                    </p>
                     <div class="panel-block">
                         <p class="control has-icons-left">
                             <input class="input" type="text" placeholder="Найти человека"/>
@@ -122,60 +74,30 @@
                           </span>
                         </p>
                     </div>
-                    {% if asp == 0 %}
-                        {% for p in persons %}
-                            <div class="panel-block">
+                    {% for p in persons %}
+                        <div class="panel-block">
                                 <span class="panel-icon">
                                   <i class="fa-solid fa-person"></i>
                                 </span>
-                                <div class="dropdown is-hoverable">
-                                    <div class="dropdown-trigger">
-                                        <button class="button"
-                                                aria-haspopup="true"
-                                                aria-controls="dropdown-menu-{{ loop.index }}">
-                                            <span>{{ p.owner_fio }}</span>
-                                        </button>
-                                    </div>
-                                    <div class="dropdown-menu" id="dropdown-menu-{{ loop.index }}" role="menu">
-                                        <div class="dropdown-content">
-                                            <a href="/dashboard/info_person/{{ p.id }}"
-                                               class="dropdown-item">Подробнее</a>
-                                            <a href="/delete/person/{{ p.id }}" class="dropdown-item">Отозвать</a>
-                                        </div>
+                            <div class="dropdown is-hoverable">
+                                <div class="dropdown-trigger">
+                                    <button class="button"
+                                            aria-haspopup="true"
+                                            aria-controls="dropdown-menu-{{ loop.index }}">
+                                        <span>{{ p.owner_fio }}</span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu-{{ loop.index }}" role="menu">
+                                    <div class="dropdown-content">
+                                        <a href="/dashboard/info_person/{{ p.id }}"
+                                           class="dropdown-item">Подробнее</a>
+                                        <a href="/delete/person/{{ p.id }}" class="dropdown-item">Отозвать</a>
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}
-                    {% elif asp == 1 %}
-                        {% for p in archive %}
-                            {% if "car_num" not in p %}
-                                <div class="panel-block">
-                                <span class="panel-icon">
-                                  <i class="fa-solid fa-person"></i>
-                                </span>
-                                    <div class="dropdown is-hoverable">
-                                        <div class="dropdown-trigger">
-                                            <button class="button"
-                                                    aria-haspopup="true"
-                                                    aria-controls="dropdown-menu-{{ loop.index }}">
-                                                <span>{{ p.owner_fio }}</span>
-                                            </button>
-                                        </div>
-                                        <div class="dropdown-menu" id="dropdown-menu-{{ loop.index }}" role="menu">
-                                            <div class="dropdown-content">
-                                                <a href="/from_archive/{{ p.id }}" class="dropdown-item">
-                                                    Сделать актуальным
-                                                </a>
-                                                <a href="/max_delete/{{ p.id }}" class="dropdown-item">
-                                                    Удалить окончательно
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                        </div>
+                    {% endfor %}
+
                 </article>
             </div>
         </div>

@@ -1,9 +1,13 @@
-import json
+import json, uuid
+import datetime
 
 users = []
 cars = []
 persons = []
 archive = []
+security = []
+posts = []
+duty = []
 
 # OPEN FILES
 
@@ -16,6 +20,12 @@ try:
         persons = json.loads(file.read())
     with open('data/archive.json', 'r') as file:
         archive = json.loads(file.read())
+    with open('data/security.json', 'r') as file:
+        security = json.loads(file.read())
+    with open('data/posts.json', 'r') as file:
+        posts = json.loads(file.read())
+    with open('data/duty.json', 'r') as file:
+        duty = json.loads(file.read())
 except:
     pass
 
@@ -29,6 +39,12 @@ def save_data():
         file.write(json.dumps(persons, ensure_ascii=False))
     with open('data/archive.json', 'w') as file:
         file.write(json.dumps(archive, ensure_ascii=False))
+    with open('data/security.json', 'w') as file:
+        file.write(json.dumps(security, ensure_ascii=False))
+    with open('data/posts.json', 'w') as file:
+        file.write(json.dumps(posts, ensure_ascii=False))
+    with open('data/duty.json', 'w') as file:
+        file.write(json.dumps(duty, ensure_ascii=False))
 
 
 # FUNCTIONS
@@ -41,10 +57,18 @@ def check_users(email, password):
     return False
 
 
-def add_car_pass(
-        car_num, car_model, car_type, owner_fio, owner_why,
-        comment, date_start, date_end, object_title, by, uniq_id
-):
+def add_simple_car_pass(request, email):
+    car_num = request.form.get('car_num')
+    car_model = request.form.get('car_model')
+    car_type = request.form.get('car_type')
+    owner_fio = request.form.get('owner_fio')
+    owner_why = request.form.get('owner_why')
+    comment = request.form.get('comment')
+    date_start = request.form.get('date_start')
+    date_end = request.form.get('date_end')
+    object_title = request.form.get('object_title')
+    by_phone = get_user_phone(email)
+    uniq_id = str(uuid.uuid4())
     cars.append({
         "car_num": car_num,
         "car_model": car_model,
@@ -55,8 +79,10 @@ def add_car_pass(
         "date_start": date_start,
         "date_end": date_end,
         "object_title": object_title,
-        "by": by,
-        "id": uniq_id
+        "by": email,
+        "by_phone": by_phone,
+        "id": uniq_id,
+        "history": []
     })
     save_data()
 
@@ -93,6 +119,7 @@ def get_user_persons_by_email(email):
             person_list.append(c)
     return person_list
 
+
 def get_user_archive_by_email(email):
     archive_list = []
     for c in archive:
@@ -118,7 +145,6 @@ def get_person_by_id(id):
 def delete_car_pass(id):
     for c in cars:
         if c['id'] == id:
-            archive.append(c)
             cars.remove(c)
             save_data()
 
@@ -126,23 +152,60 @@ def delete_car_pass(id):
 def delete_person_pass(id):
     for c in persons:
         if c['id'] == id:
-            archive.append(c)
             persons.remove(c)
             save_data()
 
-def make_actual(id):
-    for a in archive:
-        if a['id'] == id:
-            archive.remove(a)
-            if "car_num" in a:
-                cars.append(a)
-                save_data()
-            else:
-                persons.append(a)
-                save_data()
 
-def delete_from_archive(id):
-    for a in archive:
-        if a['id'] == id:
-            archive.remove(a)
+def auth_security(phone):
+    for s in security:
+        if s['phone'] == phone:
+            return True
+    return False
+
+
+def check_for_post(num):
+    for p in posts:
+        print(p)
+        if p['num'] == num:
+            return True
+    return False
+
+
+def check_on_duty_by_num(num):
+    for d in duty:
+        if d['num'] == num:
+            return d['on']
+
+
+def check_on_duty_by_id(id):
+    for d in duty:
+        if d['id'] == id:
+            return d['on']
+
+
+def set_status_on_duty_by_id(id, status):
+    for d in duty:
+        if d['id'] == id:
+            d['on'] = status
             save_data()
+
+
+def check_number_plate(num):
+    for c in cars:
+        if c['car_num'] == num:
+            return c
+    return False
+
+
+def get_user_phone(email):
+    for u in users:
+        if u['email'] == email:
+            return u['phone']
+
+def add_to_car_history(id):
+    for c in cars:
+        if c['id'] == id:
+            c['history'].append({
+                "date": datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
+                "text": ""
+            })
